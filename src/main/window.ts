@@ -59,8 +59,19 @@ export function getOrCreatePopupWindow(): BrowserWindow {
     }
   })
 
-  popupWindow.on('close', (e) => {
-    // Save window state before closing
+  // Save window state on resize (debounced)
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null
+  popupWindow.on('resize', () => {
+    if (resizeTimer) clearTimeout(resizeTimer)
+    resizeTimer = setTimeout(() => {
+      if (popupWindow && !popupWindow.isDestroyed() && !isMiniMode) {
+        const bounds = popupWindow.getBounds()
+        setWindowState({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height, isMini: false })
+      }
+    }, 500)
+  })
+
+  popupWindow.on('close', () => {
     if (popupWindow && !popupWindow.isDestroyed()) {
       const bounds = popupWindow.getBounds()
       setWindowState({
@@ -71,6 +82,7 @@ export function getOrCreatePopupWindow(): BrowserWindow {
         isMini: isMiniMode
       })
     }
+    if (resizeTimer) clearTimeout(resizeTimer)
     popupWindow = null
     isMiniMode = false
   })

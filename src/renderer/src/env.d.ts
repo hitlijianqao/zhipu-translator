@@ -45,6 +45,9 @@ interface WindowApi {
   updateShortcuts: (hotkey: string, miniHotkey: string) => Promise<{ success: boolean; error?: string }>
   onSourceText: (callback: (text: string) => void) => () => void
   onModeChange: (callback: (mode: 'full' | 'mini') => void) => () => void
+  getHistory: () => Promise<Array<{ id: string; sourceText: string; translatedText: string; sourceLanguage: string; targetLanguage: string; timestamp: number }>>
+  addHistory: (entry: { sourceText: string; translatedText: string; sourceLanguage: string; targetLanguage: string }) => Promise<unknown>
+  clearHistory: () => Promise<void>
 }
 
 interface Window {

@@ -1,6 +1,8 @@
 import { useEffect, useCallback, useState, useRef } from 'react'
 import { useTranslationStore } from '../store/translationStore'
 import LanguageSelector from './LanguageSelector'
+import { speak } from '../utils/tts'
+import HistoryPanel from './HistoryPanel'
 
 const LANG_NAMES: Record<string, string> = {
   'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'en': 'English',
@@ -22,6 +24,7 @@ export default function TranslationPopup() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fromHotkey = useRef(false)
   const [copyAnim, setCopyAnim] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
 
   const doTranslate = useCallback(async (text: string) => {
     if (!text || !text.trim()) return
@@ -38,6 +41,13 @@ export default function TranslationPopup() {
         setError(result.error)
       }
       if (!result.error && result.translatedText) {
+        // Save to history
+        window.api.addHistory({
+          sourceText: text.trim(),
+          translatedText: result.translatedText,
+          sourceLanguage: result.sourceLanguage || sourceLanguage,
+          targetLanguage: result.targetLanguage || targetLanguage
+        }).catch(() => {})
         const settings = await window.api.getSettings()
         if (settings.autoCopy) {
           window.api.writeClipboard(result.translatedText)
@@ -107,8 +117,6 @@ export default function TranslationPopup() {
     return null
   }
 
-  const hasContent = sourceText && sourceText.trim()
-
   return (
     <div className="w-full h-full flex flex-col bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl shadow-2xl shadow-slate-400/20 dark:shadow-black/40 overflow-hidden border border-slate-200/60 dark:border-slate-700/60">
       {/* Title Bar */}
@@ -118,6 +126,13 @@ export default function TranslationPopup() {
           <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wide no-select">TRANS</span>
         </div>
         <div className="flex items-center gap-0.5 no-drag">
+          <button onClick={() => setShowHistory(!showHistory)}
+            className={`p-1.5 rounded-lg transition-colors ${showHistory ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-500' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+            title="翻译历史">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
           <button onClick={window.api.toggleMiniMode}
             className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
             title="迷你模式">
@@ -143,8 +158,20 @@ export default function TranslationPopup() {
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="px-4 pt-3">
+      {showHistory ? (
+        <HistoryPanel
+          onSelect={({ sourceText, sourceLanguage: sl, targetLanguage: tl }) => {
+            setSourceLanguage(sl)
+            setTargetLanguage(tl)
+            setInputText(sourceText)
+            setShowHistory(false)
+          }}
+          onClose={() => setShowHistory(false)}
+        />
+      ) : (
+        <>
+          {/* Input Area */}
+          <div className="px-4 pt-3">
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-1.5">
             {detectedLanguage && (
@@ -267,8 +294,18 @@ export default function TranslationPopup() {
                 </>
               )}
             </button>
+            <button
+              onClick={() => speak(translation, targetLanguage)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
+              title="朗读翻译">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M6.5 8.5l-2.5 3H2v3h2l2.5 3h1v-9h-1zM20 12h-2" />
+              </svg>
+            </button>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   )

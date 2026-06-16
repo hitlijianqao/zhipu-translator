@@ -14,7 +14,8 @@
       "Bash(git commit -m 'refactor: simplify translation trigger - remove all key hooks *)",
       "Bash(powershell -Command \"Get-Process 'Zhipu Translator' -ErrorAction SilentlyContinue | Stop-Process -Force\")",
       "Bash(git commit -m 'feat: add float translation - auto-detect text selection on mouse up *)",
-      "Bash(git commit -m 'fix: shortcut registration feedback + HotkeyRecorder state sync *)"
+      "Bash(git commit -m 'fix: shortcut registration feedback + HotkeyRecorder state sync *)",
+      "Bash(git commit -m 'feat: translation history, TTS speech, window size memory *)"
     ]
   }
 }

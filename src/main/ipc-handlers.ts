@@ -5,6 +5,7 @@ import { getApiKey, getSettings, updateSettings, setApiKey } from './store'
 import { readClipboardText, writeClipboardText } from './clipboard'
 import { hideTranslationPopup, toggleMiniMode, setAlwaysOnTop, showSettingsWindow, closeSettingsWindow } from './window'
 import { registerShortcuts, unregisterAll, isShortcutValid } from './shortcut'
+import { loadHistory, addHistoryEntry, clearHistory } from './history'
 
 export function registerIpcHandlers(
   onTranslateCallback: () => void
@@ -38,6 +39,14 @@ export function registerIpcHandlers(
   ipcMain.handle('test-api-connection', async (_event, apiKey: string) => testApiConnection(apiKey))
   ipcMain.handle('read-clipboard', () => readClipboardText())
   ipcMain.handle('write-clipboard', (_event, text: string) => { writeClipboardText(text) })
+
+  // History
+  ipcMain.handle('get-history', () => loadHistory())
+  ipcMain.handle('add-history', (_event, entry: { sourceText: string; translatedText: string; sourceLanguage: string; targetLanguage: string }) => {
+    return addHistoryEntry(entry)
+  })
+  ipcMain.handle('clear-history', () => { clearHistory() })
+
   ipcMain.handle('hide-window', () => { hideTranslationPopup() })
   ipcMain.handle('toggle-mini-mode', () => { toggleMiniMode() })
   ipcMain.handle('show-settings', () => { showSettingsWindow() })

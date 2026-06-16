@@ -73,6 +73,16 @@ contextBridge.exposeInMainWorld('api', {
   closeSettings: (): Promise<void> =>
     ipcRenderer.invoke('close-settings'),
 
+  // History
+  getHistory: (): Promise<Array<{ id: string; sourceText: string; translatedText: string; sourceLanguage: string; targetLanguage: string; timestamp: number }>> =>
+    ipcRenderer.invoke('get-history'),
+
+  addHistory: (entry: { sourceText: string; translatedText: string; sourceLanguage: string; targetLanguage: string }) =>
+    ipcRenderer.invoke('add-history', entry),
+
+  clearHistory: (): Promise<void> =>
+    ipcRenderer.invoke('clear-history'),
+
   // Shortcuts
   updateShortcuts: (hotkey: string, miniHotkey: string): Promise<{ success: boolean; error?: string }> =>
     ipcRenderer.invoke('update-shortcuts', hotkey, miniHotkey),
