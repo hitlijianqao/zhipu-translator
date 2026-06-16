@@ -163,7 +163,7 @@ export default function TranslationPopup() {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="输入文字，或选中文本后按 Ctrl+Shift+T"
+          placeholder="输入文字翻译，或 Ctrl+C 复制文字后按 Ctrl+Shift+T"
           rows={3}
           className="w-full resize-none text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-300 dark:focus:border-indigo-600 transition-all no-drag"
         />

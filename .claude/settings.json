@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill /IM \"powershell.exe\" /F)",
+      "Bash(rm -rf \"c:/Users/86737/Desktop/trans/release\")",
+      "Bash(rm -rf release release-old)",
+      "Bash(mkdir -p release/win-unpacked)",
+      "Bash(echo \"test\")",
+      "Bash(rm -rf release)",
+      "Bash(tasklist)",
+      "Bash(taskkill /F /IM \"Zhipu Translator.exe\")",
+      "Bash(taskkill /F /IM \"powershell.exe\")",
+      "Bash(powershell -Command \"Get-Process 'Zhipu Translator' -ErrorAction SilentlyContinue | Stop-Process -Force; Get-Process 'powershell' -ErrorAction SilentlyContinue | Stop-Process -Force\")"
+    ]
+  }
+}
