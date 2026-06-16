@@ -27,7 +27,6 @@ interface Settings {
   fontSize: 'small' | 'medium' | 'large'
   model: string
   customPrompt: string
-  floatTranslate: boolean
 }
 
 interface WindowApi {

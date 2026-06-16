@@ -5,12 +5,10 @@ import { getApiKey, getSettings, updateSettings, setApiKey } from './store'
 import { readClipboardText, writeClipboardText } from './clipboard'
 import { hideTranslationPopup, toggleMiniMode, setAlwaysOnTop, showSettingsWindow, closeSettingsWindow } from './window'
 import { registerShortcuts, unregisterAll, isShortcutValid } from './shortcut'
-import { startFloatTranslate, stopFloatTranslate, isFloatTranslateRunning } from './floatTranslate'
 
 export function registerIpcHandlers(
   onTranslateCallback: () => void
 ): void {
-  // Translation request
   ipcMain.handle('translate-text', async (_event, request: TranslateRequest) => {
     const apiKey = getApiKey()
     if (!apiKey) {
@@ -25,93 +23,26 @@ export function registerIpcHandlers(
     return translateText(apiKey, request, settings.model, settings.customPrompt)
   })
 
-  // Settings
-  ipcMain.handle('get-settings', () => {
-    return getSettings()
-  })
+  ipcMain.handle('get-settings', () => getSettings())
 
   ipcMain.handle('update-settings', (_event, partial: Record<string, unknown>) => {
     const updated = updateSettings(partial as Partial<ReturnType<typeof getSettings>>)
-
-    // Apply always-on-top change immediately
     if ('alwaysOnTop' in partial) {
       setAlwaysOnTop(partial.alwaysOnTop as boolean)
     }
-
-    // Apply float translate change immediately
-    if ('floatTranslate' in partial) {
-      if (partial.floatTranslate) {
-        startFloatTranslate((text) => {
-          const { showTranslationPopup } = require('./window')
-          showTranslationPopup(text)
-        })
-      } else {
-        stopFloatTranslate()
-      }
-    }
-
     return updated
   })
 
-  // API Key management
-  ipcMain.handle('get-api-key', () => {
-    return getApiKey()
-  })
+  ipcMain.handle('get-api-key', () => getApiKey())
+  ipcMain.handle('set-api-key', (_event, key: string) => { setApiKey(key) })
+  ipcMain.handle('test-api-connection', async (_event, apiKey: string) => testApiConnection(apiKey))
+  ipcMain.handle('read-clipboard', () => readClipboardText())
+  ipcMain.handle('write-clipboard', (_event, text: string) => { writeClipboardText(text) })
+  ipcMain.handle('hide-window', () => { hideTranslationPopup() })
+  ipcMain.handle('toggle-mini-mode', () => { toggleMiniMode() })
+  ipcMain.handle('show-settings', () => { showSettingsWindow() })
+  ipcMain.handle('close-settings', () => { closeSettingsWindow() })
 
-  ipcMain.handle('set-api-key', (_event, key: string) => {
-    setApiKey(key)
-  })
-
-  ipcMain.handle('test-api-connection', async (_event, apiKey: string) => {
-    return testApiConnection(apiKey)
-  })
-
-  // Clipboard
-  ipcMain.handle('read-clipboard', () => {
-    return readClipboardText()
-  })
-
-  ipcMain.handle('write-clipboard', (_event, text: string) => {
-    writeClipboardText(text)
-  })
-
-  // Window control
-  ipcMain.handle('hide-window', () => {
-    hideTranslationPopup()
-  })
-
-  ipcMain.handle('toggle-mini-mode', () => {
-    toggleMiniMode()
-  })
-
-  ipcMain.handle('show-settings', () => {
-    showSettingsWindow()
-  })
-
-  ipcMain.handle('close-settings', () => {
-    closeSettingsWindow()
-  })
-
-  // Float translate
-  ipcMain.handle('toggle-float-translate', (_event, enabled: boolean) => {
-    if (enabled) {
-      startFloatTranslate((text: string) => {
-        // We reference handleTranslateTrigger indirectly
-        // The callback just needs to pass text to the popup
-        const { showTranslationPopup } = require('./window')
-        showTranslationPopup(text)
-      })
-    } else {
-      stopFloatTranslate()
-    }
-    return isFloatTranslateRunning()
-  })
-
-  ipcMain.handle('get-float-translate-status', () => {
-    return isFloatTranslateRunning()
-  })
-
-  // Shortcut
   ipcMain.handle('update-shortcuts', (_event, hotkey: string, miniHotkey: string) => {
     if (!isShortcutValid(hotkey)) {
       return { success: false, error: '快捷键格式无效。至少需要一个修饰键（Ctrl/Shift/Alt）+ 一个字母键。' }

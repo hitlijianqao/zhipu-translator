@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 interface HotkeyRecorderProps {
   value: string
@@ -8,6 +8,13 @@ interface HotkeyRecorderProps {
 export default function HotkeyRecorder({ value, onChange }: HotkeyRecorderProps) {
   const [recording, setRecording] = useState(false)
   const [displayKeys, setDisplayKeys] = useState(value)
+
+  // Sync with external value changes
+  useEffect(() => {
+    if (!recording) {
+      setDisplayKeys(value)
+    }
+  }, [value, recording])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

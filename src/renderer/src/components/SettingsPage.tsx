@@ -26,9 +26,13 @@ export default function SettingsPage() {
     try {
       await window.api.setApiKey(apiKey)
       await window.api.updateSettings(settings)
-      await window.api.updateShortcuts(settings.hotKey, settings.miniModeHotKey)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
+      const result = await window.api.updateShortcuts(settings.hotKey, settings.miniModeHotKey)
+      if (!result.success) {
+        alert(result.error || '快捷键注册失败')
+      } else {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      }
     } catch (e) { console.error('Save failed:', e) }
     setSaving(false)
   }, [settings, apiKey])
@@ -162,7 +166,6 @@ export default function SettingsPage() {
               { key: 'autoCopy' as const, label: '翻译后自动复制结果' },
               { key: 'alwaysOnTop' as const, label: '翻译窗口保持置顶' },
               { key: 'launchAtStartup' as const, label: '开机自动启动' },
-              { key: 'floatTranslate' as const, label: '鼠标选中文字自动翻译' },
             ].map(({ key, label }) => (
               <label key={key} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
                 <span className="text-sm text-slate-600 dark:text-slate-400">{label}</span>

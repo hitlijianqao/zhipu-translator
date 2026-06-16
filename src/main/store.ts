@@ -15,7 +15,6 @@ export interface Settings {
   fontSize: 'small' | 'medium' | 'large'
   model: string
   customPrompt: string
-  floatTranslate: boolean
 }
 
 export interface WindowState {
@@ -43,8 +42,7 @@ const defaultSettings: Settings = {
   theme: 'system',
   fontSize: 'medium',
   model: 'glm-4-flash',
-  customPrompt: '',
-  floatTranslate: false
+  customPrompt: ''
 }
 
 const defaultConfig: Config = {
