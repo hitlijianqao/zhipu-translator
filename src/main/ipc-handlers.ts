@@ -5,6 +5,7 @@ import { getApiKey, getSettings, updateSettings, setApiKey } from './store'
 import { readClipboardText, writeClipboardText } from './clipboard'
 import { hideTranslationPopup, toggleMiniMode, setAlwaysOnTop, showSettingsWindow, closeSettingsWindow } from './window'
 import { registerShortcuts, unregisterAll, isShortcutValid } from './shortcut'
+import { startFloatTranslate, stopFloatTranslate, isFloatTranslateRunning } from './floatTranslate'
 
 export function registerIpcHandlers(
   onTranslateCallback: () => void
@@ -35,6 +36,18 @@ export function registerIpcHandlers(
     // Apply always-on-top change immediately
     if ('alwaysOnTop' in partial) {
       setAlwaysOnTop(partial.alwaysOnTop as boolean)
+    }
+
+    // Apply float translate change immediately
+    if ('floatTranslate' in partial) {
+      if (partial.floatTranslate) {
+        startFloatTranslate((text) => {
+          const { showTranslationPopup } = require('./window')
+          showTranslationPopup(text)
+        })
+      } else {
+        stopFloatTranslate()
+      }
     }
 
     return updated
@@ -77,6 +90,25 @@ export function registerIpcHandlers(
 
   ipcMain.handle('close-settings', () => {
     closeSettingsWindow()
+  })
+
+  // Float translate
+  ipcMain.handle('toggle-float-translate', (_event, enabled: boolean) => {
+    if (enabled) {
+      startFloatTranslate((text: string) => {
+        // We reference handleTranslateTrigger indirectly
+        // The callback just needs to pass text to the popup
+        const { showTranslationPopup } = require('./window')
+        showTranslationPopup(text)
+      })
+    } else {
+      stopFloatTranslate()
+    }
+    return isFloatTranslateRunning()
+  })
+
+  ipcMain.handle('get-float-translate-status', () => {
+    return isFloatTranslateRunning()
   })
 
   // Shortcut

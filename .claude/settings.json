@@ -10,7 +10,10 @@
       "Bash(tasklist)",
       "Bash(taskkill /F /IM \"Zhipu Translator.exe\")",
       "Bash(taskkill /F /IM \"powershell.exe\")",
-      "Bash(powershell -Command \"Get-Process 'Zhipu Translator' -ErrorAction SilentlyContinue | Stop-Process -Force; Get-Process 'powershell' -ErrorAction SilentlyContinue | Stop-Process -Force\")"
+      "Bash(powershell -Command \"Get-Process 'Zhipu Translator' -ErrorAction SilentlyContinue | Stop-Process -Force; Get-Process 'powershell' -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(git commit -m 'refactor: simplify translation trigger - remove all key hooks *)",
+      "Bash(powershell -Command \"Get-Process 'Zhipu Translator' -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(git commit -m 'feat: add float translation - auto-detect text selection on mouse up *)"
     ]
   }
 }
