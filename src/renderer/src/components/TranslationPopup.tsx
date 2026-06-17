@@ -180,10 +180,22 @@ export default function TranslationPopup() {
               </span>
             )}
           </div>
-          <button onClick={handlePasteFromClipboard}
-            className="text-[11px] px-2.5 py-0.5 text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-full transition-colors font-medium">
-            从剪贴板粘贴
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={handlePasteFromClipboard}
+              className="text-[11px] px-2.5 py-0.5 text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-full transition-colors font-medium">
+              从剪贴板粘贴
+            </button>
+            {inputText.trim() && (
+              <button
+                onClick={() => speak(inputText, detectedLanguage || sourceLanguage)}
+                className="p-1 rounded-full text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
+                title="朗读原文">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M6.5 8.5l-2.5 3H2v3h2l2.5 3h1v-9h-1zM20 12h-2" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
         <textarea
           ref={textareaRef}

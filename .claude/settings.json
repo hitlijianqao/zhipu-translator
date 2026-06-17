@@ -15,7 +15,15 @@
       "Bash(powershell -Command \"Get-Process 'Zhipu Translator' -ErrorAction SilentlyContinue | Stop-Process -Force\")",
       "Bash(git commit -m 'feat: add float translation - auto-detect text selection on mouse up *)",
       "Bash(git commit -m 'fix: shortcut registration feedback + HotkeyRecorder state sync *)",
-      "Bash(git commit -m 'feat: translation history, TTS speech, window size memory *)"
+      "Bash(git commit -m 'feat: translation history, TTS speech, window size memory *)",
+      "Bash(ls -la \"C:\\\\Users\\\\86737\\\\.claude\\\\projects\\\\\" 2>/dev/null || echo \"Projects directory not found\")",
+      "Read(//c/Users/86737/.claude/projects\" 2>/dev/**)",
+      "Bash(ls -la /c/Users/86737/.claude/projects/c--Users-86737-Desktop-trans/transcripts/ 2>/dev/null || echo \"Not found at that path\")",
+      "Read(//c/Users/86737/.claude/projects/c--Users-86737-Desktop-trans/**)",
+      "Bash(ls /c/Users/86737/.claude/projects/ 2>/dev/null || echo \"Projects dir not found\")",
+      "Read(//c/Users/86737/.claude/projects//**)",
+      "Bash(ls -la /c/Users/86737/.claude/)",
+      "Read(//c/Users/86737/.claude//**)"
     ]
   }
 }
